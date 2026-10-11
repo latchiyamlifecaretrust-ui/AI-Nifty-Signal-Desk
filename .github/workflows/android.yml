@@ -27,19 +27,15 @@ jobs:
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
 
-      - name: Check project files
+      - name: Check Android project
         run: |
-          echo "Checking Android project..."
+          echo "Checking project files..."
           ls -la
-          if [ ! -f settings.gradle ] && [ ! -f settings.gradle.kts ]; then
-            echo "ERROR: settings.gradle is missing"
-            exit 1
-          fi
-          if [ ! -f app/build.gradle ] && [ ! -f app/build.gradle.kts ]; then
-            echo "ERROR: app/build.gradle is missing"
-            exit 1
-          fi
+          test -f settings.gradle -o -f settings.gradle.kts
+          test -f app/build.gradle -o -f app/build.gradle.kts
 
       - name: Build debug APK
         run: |
@@ -52,22 +48,21 @@ jobs:
 
       - name: Verify APK
         run: |
-          echo "Searching for APK..."
+          echo "Checking generated APK..."
           find app/build/outputs/apk -type f -name "*.apk" -ls
-          APK=$(find app/build/outputs/apk/debug -type f -name "*.apk" -size +100k -print -quit 2>/dev/null || true)
+          APK=$(find app/build/outputs/apk/debug -type f -name "*.apk" -size +100k -print -quit)
           if [ -z "$APK" ]; then
-            echo "ERROR: Valid APK not found."
-            echo "Check Gradle configuration and build output."
+            echo "ERROR: APK missing or too small"
             exit 1
           fi
-          echo "APK verified:"
           ls -lh "$APK"
           file "$APK"
 
-      - name: Upload installable APK
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: AI-Nifty-Signal-Desk-APK
           path: app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
           retention-days: 7
+
