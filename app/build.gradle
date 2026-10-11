@@ -1,7 +1,5 @@
 
-    sourceSets {
-        main.java.srcDirs += 'src/java'
-    }
+    
 plugins {
     id 'com.android.application'
 }
@@ -9,6 +7,10 @@ plugins {
 android {
     namespace 'in.latchiyamlifecare.niftysignaldesk'
     compileSdk 35
+
+    sourceSets {
+        main.java.srcDirs = ['src/java']
+    }
 
     defaultConfig {
         applicationId 'in.latchiyamlifecare.niftysignaldesk'
