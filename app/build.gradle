@@ -1,3 +1,7 @@
+
+    sourceSets {
+        main.java.srcDirs += 'src/java'
+    }
 plugins {
     id 'com.android.application'
 }
